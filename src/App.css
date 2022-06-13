@@ -8,13 +8,15 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-direction: column;
+  max-width: 1022px;
+  margin: 0 auto;
 }
 
 .albunsList {
   display: flex;
   flex-direction: row;
   max-width: 768px;
-  padding: 0 50px;
 }
 
 .albums {
@@ -24,4 +26,13 @@
 
 .selected {
   border: 1px solid red;
+}
+
+.songsDetails {
+  width: 100%;
+  align-items: center;
+}
+
+table {
+
 }
