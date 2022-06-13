@@ -26,7 +26,7 @@ const handleSelectItem = (item) => {
 }
 
 const handlePreviousItem = () => {
-  if(selectedItem === albumList[0]){
+  if(selectedItem === 0){
     setSelectedItem(albumList.length - 1)
     return;
   }
@@ -35,9 +35,8 @@ const handlePreviousItem = () => {
 }
 
 const handleNextItem = () => {
-  if(albumList[selectedItem] === albumList.length - 1){
-    console.log("lastItem");
-    selectedItem(0);
+  if(selectedItem === albumList.length - 1){
+    setSelectedItem(0)
     return;
   }
   setSelectedItem(selectedItem + 1)  
@@ -63,7 +62,7 @@ const handleNextItem = () => {
         </div>
 
         <button>
-        <ArrowRight size={32} onClick={handleNextItem}/>
+         <ArrowRight size={32} onClick={handleNextItem}/>
         </button>
       </div>
     </div>
