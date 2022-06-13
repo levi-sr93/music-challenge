@@ -1,23 +1,71 @@
-import logo from './logo.svg';
-import './App.css';
 
+import './App.css';
+import { useEffect, useState } from 'react';
+import { ArrowLeft, ArrowRight } from 'phosphor-react';
+
+import axios from 'axios';
+
+// http://demo.subsonic.org/rest/getAlbumList2?type=newest&u=guest&p=guest&v=1.12.0&c=myapp&f=json
 function App() {
+
+  const [albumList, setAlbumsList] = useState();
+  const [selectedItem, setSelectedItem] = useState();
+  const fetchData = async () => {
+    const result = await axios.get("http://demo.subsonic.org/rest/getAlbumList2?type=newest&u=guest&p=guest&v=1.12.0&c=myapp&f=json")
+
+    let albumsList = result.data["subsonic-response"].albumList2.album;
+    setAlbumsList(albumsList)
+  }
+
+  useEffect(() => {
+    fetchData();
+  }, [])
+
+const handleSelectItem = (item) => {
+  setSelectedItem(item)
+}
+
+const handlePreviousItem = () => {
+  if(selectedItem === albumList[0]){
+    setSelectedItem(albumList.length - 1)
+    return;
+  }
+  setSelectedItem(selectedItem - 1) 
+  
+}
+
+const handleNextItem = () => {
+  if(albumList[selectedItem] === albumList.length - 1){
+    console.log("lastItem");
+    selectedItem(0);
+    return;
+  }
+  setSelectedItem(selectedItem + 1)  
+
+}
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="container">
+      <div className='albunsList'>
+        <button>
+        <ArrowLeft size={32} onClick={handlePreviousItem}/>
+        </button>
+        {console.log(albumList)}
+        <div className="albums">
+          {albumList?.map((album, index) => {
+            return (
+              <div key={album.id} className={`albumItem ${selectedItem === index && "selected"}`} onClick={() => handleSelectItem(index)}>
+              <span>{album.name}</span>
+            </div>
+            )
+          })
+        }
+        </div>
+
+        <button>
+        <ArrowRight size={32} onClick={handleNextItem}/>
+        </button>
+      </div>
     </div>
   );
 }
