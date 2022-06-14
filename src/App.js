@@ -13,19 +13,24 @@ function App() {
   const [albumsSongs, setAlbumSongs] = useState();
 
   const handleGetAlbumsDetails = useCallback(async (id) => {
-    const result = await axios.get(`http://demo.subsonic.org/rest/getAlbum?type=newest&u=guest&p=guest&v=1.12.0&c=myapp&f=json&id=${id}`)
+
+    const result = await axios.get(`http://demo.subsonic.org/rest/getAlbum?type=newest&u=guest&p=guest&v=1.12.0&c=myapp&f=json&id=${id}`);
     let songs = result.data["subsonic-response"].album?.song
     setAlbumSongs(songs)
   }, [])
 
   const fetchData = async () => {
     const result = await axios.get("http://demo.subsonic.org/rest/getAlbumList2?type=newest&u=guest&p=guest&v=1.12.0&c=myapp&f=json")
-
     let albumsList = result.data["subsonic-response"].albumList2.album;
-    setAlbumsList(albumsList)
+    setAlbumsList(albumsList);
+
+    albumList?.map(async (album) => {
+       const res = await axios.get(`http://demo.subsonic.org/rest/getCoverArt?type=newest&u=guest&p=guest&v=1.12.0&c=myapp&f=json&id=${album.id}}`)
+      console.log(res.data);
+    })
+    
   }
 
-  
   useEffect(() => {
     fetchData();
   }, []);
@@ -36,43 +41,43 @@ function App() {
 
   useEffect(() => {
     if(albumList?.length){
-      handleGetAlbumsDetails(albumList[0].id)
+      handleGetAlbumsDetails(albumList[selectedItem].id)
     }
   }, [albumList, handleGetAlbumsDetails])
 
 const handleSelectItem = (item) => {
   setSelectedItem(item)
-  handleGetAlbumsDetails(item)
+  handleGetAlbumsDetails(albumList[item].id)
 }
 
 const handlePreviousItem = () => {
   if(selectedItem === 0){
     setSelectedItem(albumList.length - 1);
-    handleGetAlbumsDetails(selectedItem);
+    handleGetAlbumsDetails(albumList[selectedItem].id);
     return;
   }
   setSelectedItem(selectedItem - 1) 
-  handleGetAlbumsDetails(selectedItem);
+  handleGetAlbumsDetails(albumList[selectedItem].id);
 
 }
 
 const handleNextItem = () => {
   if(selectedItem === albumList.length - 1){
     setSelectedItem(0)
-    handleGetAlbumsDetails(selectedItem);
+    handleGetAlbumsDetails(albumList[selectedItem].id);
 
     return;
   }
   setSelectedItem(selectedItem + 1)  
-  handleGetAlbumsDetails(selectedItem);
+  handleGetAlbumsDetails(albumList[selectedItem].id);
 
 }
 
   return (
     <div className="container">
       <div className='albunsList'>
-        <button>
-        <ArrowLeft size={32} onClick={handlePreviousItem}/>
+        <button onClick={handlePreviousItem}>
+        <ArrowLeft size={32} />
         </button>
 
         <div className="albums">
@@ -86,8 +91,8 @@ const handleNextItem = () => {
         }
         </div>
 
-        <button>
-         <ArrowRight size={32} onClick={handleNextItem}/>
+        <button onClick={handleNextItem}>
+         <ArrowRight size={32} />
         </button>
       </div>
 
